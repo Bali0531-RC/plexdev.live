@@ -1,6 +1,6 @@
 #!/bin/bash
 # Unofficial PlexDevelopment Products Installer
-# This script automatically detects your Linux distribution and installs selected Plex products
+# This script automatically detects your Linux distribution and installs selected Plex products 
 
 #----- Color Definitions -----#
 RED='\033[0;31m'
@@ -1580,10 +1580,9 @@ install() {
     
     # Create install directory
     sudo mkdir -p $INSTALL_DIR
-
+    sleep 6
 }
 main(){
-    sleep 6
     clear
     echo -e "${BOLD}${CYAN}"
     echo "  _____  _           _____                 _                                  _   "
