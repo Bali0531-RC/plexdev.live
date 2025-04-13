@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PlexDev.live - Unofficial Installer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- Theme Variables --- */
+        :root {
+            /* Stable Theme (Default) */
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #e4e4e4;
+            --text-secondary: #a0a0a0;
+            --accent: #3498db; /* Blue */
+            --accent-dark: #2980b9;
+            --success: #2ecc71; /* Green */
+            --warning: #f39c12; /* Orange */
+            --danger: #e74c3c; /* Red */
+            --card-bg: #252525;
+            --border-color: #333;
+            --code-color: #f1c40f; /* Yellow */
+            --header-animation: pulse;
+            --header-animation-color: var(--accent);
+            --body-transition: all 0.4s ease; /* Smooth theme transition */
+        }
+
+        /* Beta Theme Variables (Applied when body has .beta-theme class) */
+        body.beta-theme {
+            --bg-primary: #0a0a0a; /* Darker black */
+            --bg-secondary: #111;
+            --text-primary: #00ff00; /* Bright Green */
+            --text-secondary: #00aa00; /* Darker Green */
+            --accent: #ff9900; /* Amber/Orange */
+            --accent-dark: #cc7a00;
+            --success: #00dd00;
+            --warning: #ffcc00; /* Yellowish */
+            --danger: #ff4444; /* Brighter Red */
+            --card-bg: #151515;
+            --border-color: #444;
+            --code-color: #00ffcc; /* Cyan */
+            --header-animation: glitch; /* Different animation */
+            --header-animation-color: var(--accent);
+        }
+
+        /* --- Basic Styles --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Consolas', 'Courier New', monospace; /* More "dev" font */
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            transition: var(--body-transition); /* Use variable for transition */
+        }
+        h1, h2, h3 { color: var(--text-primary); margin: 1.5rem 0 1rem 0; }
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            text-shadow: 0 0 5px var(--accent); /* Add subtle glow */
+        }
+        /* Header animation */
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 120px;
+            height: 2px;
+            background-color: var(--header-animation-color);
+            animation: var(--header-animation) 2s infinite; /* Use variable */
+        }
+        h2 { font-size: 1.8rem; margin-top: 2rem; }
+        p { margin: 1rem 0; color: var(--text-secondary); }
+        a { color: var(--accent); text-decoration: none; transition: color 0.3s ease; }
+        a:hover { color: var(--accent-dark); text-decoration: underline; }
+        .code-block {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            overflow-x: auto;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        .code-block:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.4); transform: translateY(-1px); border-color: var(--accent); }
+        .code-block code { color: var(--code-color); } /* Use variable */
+        .code-block::before { content: "$ "; opacity: 0.5; }
+        .code-block .copy-btn { position: absolute; top: 10px; right: 10px; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; opacity: 0; transition: all 0.3s ease; font-weight: bold; }
+        .code-block:hover .copy-btn { opacity: 1; }
+        .code-block .copy-btn:hover { background: var(--accent-dark); }
+        .card { background-color: var(--card-bg); border-radius: 8px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: all 0.3s ease; border-left: 4px solid var(--accent); }
+        .card:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.4); transform: translateY(-1px); }
+        .warning { background-color: rgba(243, 156, 18, 0.1); border-left: 4px solid var(--warning); padding: 15px; margin: 20px 0; border-radius: 4px; color: var(--warning); }
+        .warning strong { color: var(--warning); }
+        .official-note { background-color: rgba(52, 152, 219, 0.1); border-left: 4px solid var(--accent); padding: 15px; margin: 20px 0; border-radius: 4px; color: var(--accent); }
+        .official-note strong { color: var(--accent); }
+        footer { margin-top: 40px; color: var(--text-secondary); text-align: center; border-top: 1px solid var(--border-color); padding-top: 20px; font-size: 0.9rem; }
+        .tabs { display: flex; margin: 20px 0; border-bottom: 1px solid var(--border-color); }
+        .tab { padding: 10px 20px; cursor: pointer; color: var(--text-secondary); transition: all 0.3s ease; border-bottom: 2px solid transparent; font-weight: bold; }
+        .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+
+        /* --- Animations --- */
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Glitch animation for Beta */
+        @keyframes glitch {
+          0% { transform: translate(0); opacity: 1; }
+          20% { transform: translate(-2px, 2px); opacity: 0.8; }
+          40% { transform: translate(-2px, -2px); opacity: 1; }
+          60% { transform: translate(2px, 2px); opacity: 0.7; }
+          80% { transform: translate(2px, -2px); opacity: 1; }
+          100% { transform: translate(0); opacity: 0.9; }
+        }
+
+        @media (max-width: 768px) { body { padding: 15px; } h1 { font-size: 2rem; } .tabs { flex-direction: column; } }
+
+        /* --- Toggle Switch Styles (Refined) --- */
+        .switch-container {
+            display: inline-flex; /* Use inline-flex for better alignment */
+            align-items: center;
+            margin-left: 15px; /* Space from heading */
+            vertical-align: middle;
+            background-color: var(--bg-secondary); /* Give it a background */
+            padding: 5px 10px;
+            border-radius: 20px; /* Rounded container */
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        .switch-text {
+            font-size: 0.85em; /* Slightly smaller text */
+            font-weight: bold;
+            cursor: pointer; /* Make text clickable */
+            padding: 0 5px;
+            transition: opacity 0.4s ease;
+        }
+        .stable-text { color: var(--success); }
+        .beta-text { color: var(--warning); }
+        /* Style for the switch itself */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            margin: 0 5px; /* Space around the switch */
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--success); /* Start green */ transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--warning); } /* Orange when checked */
+        input:focus + .slider { box-shadow: 0 0 2px var(--accent); }
+        input:checked + .slider:before { transform: translateX(20px); }
+        #beta-warning { display: none; margin-top: 10px; }
+        #beta-unavailable-text { margin-left: 10px; color: var(--danger); font-size: 0.8em; display: none; }
+    </style>
+</head>
+<body> <!-- Class will be added/removed here -->
+    <h1>PlexDev.live Unofficial Installer</h1>
+    <div class="official-note">
+        <strong>⚠️ Important:</strong> This is an unofficial installer. The official PlexDevelopment website is
+        <a href="https://plexdevelopment.net" target="_blank">plexdevelopment.net</a>.
+    </div>
+
+    <p>Welcome! This tool helps you easily set up various Plex products on your Linux server.</p>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('quick')">Quick Install</div>
+        <div class="tab" onclick="switchTab('manual')">Manual Install</div>
+        <div class="tab" onclick="switchTab('about')">About</div>
+        <div class="tab" onclick="window.location.href='/guide'">Guide</div> <!-- Link to guide page -->
+    </div>
+
+    <!-- Quick Install Tab -->
+    <div id="quick" class="tab-content active">
+        <h2>
+            Quick Installation
+            <!-- Version Toggle (Refined Layout) -->
+            <div class="switch-container">
+                <span class="switch-text stable-text" id="stable-label" onclick="document.getElementById('version-toggle').click()">Stable</span>
+                <label class="switch">
+                    <input type="checkbox" id="version-toggle" onchange="toggleVersion()">
+                    <span class="slider"></span>
+                </label>
+                <span class="switch-text beta-text" id="beta-label" onclick="document.getElementById('version-toggle').click()">Beta</span>
+                <span id="beta-unavailable-text">(Beta script not available)</span>
+            </div>
+        </h2>
+        <!-- Beta Warning Message -->
+        <div class="warning" id="beta-warning">
+            <strong>Heads Up!</strong> You've selected the Beta version. This version might have bugs or unfinished features. Use it at your own risk! Engage terminal velocity!
+        </div>
+        <p>Copy and paste this command into your server's terminal. It downloads and runs the installer script automatically.</p>
+        <div class="code-block" id="quick-install-block">
+            <code id="quick-install-code">curl -sSL https://plexdev.live/install.sh | bash -i</code>
+            <button class="copy-btn" onclick="copyToClipboard(document.getElementById('quick-install-code').textContent)">Copy</button>
+        </div>
+    </div>
+
+    <!-- Manual Install Tab -->
+    <div id="manual" class="tab-content">
+        <h2>Manual Installation</h2>
+        <p>If you prefer, download the script first, make it runnable, and then execute it.</p>
+        <p><i>(Note: Use the toggle above to switch between Stable/Beta commands)</i></p>
+
+        <div id="manual-steps">
+            <p><strong>Step 1: Download</strong></p>
+            <div class="code-block">
+                <code id="manual-download-code">curl -sSL -o install.sh https://plexdev.live/install.sh</code>
+                <button class="copy-btn" onclick="copyToClipboard(document.getElementById('manual-download-code').textContent)">Copy</button>
+            </div>
+
+            <p><strong>Step 2: Make it Executable</strong></p>
+            <div class="code-block">
+                <code id="manual-chmod-code">chmod +x install.sh</code>
+                <button class="copy-btn" onclick="copyToClipboard(document.getElementById('manual-chmod-code').textContent)">Copy</button>
+            </div>
+
+            <p><strong>Step 3: Run It</strong></p>
+            <div class="code-block">
+                <code id="manual-run-code">./install.sh</code>
+                <button class="copy-btn" onclick="copyToClipboard(document.getElementById('manual-run-code').textContent)">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Tab -->
+    <div id="about" class="tab-content">
+        <h2>About This Project</h2>
+        <div class="card">
+            <p>This project was created by <strong>bali0531</strong> to simplify the setup process for PlexDevelopment products.</p>
+            <p>The installer automatically:</p>
+            <ul style="margin-left: 40px; padding-left: 5px; color: var(--text-secondary);">
+                <li style="margin-bottom: 0.5rem;">Detects your Linux distribution</li>
+                <li style="margin-bottom: 0.5rem;">Installs all necessary dependencies (like Node.js, Nginx)</li>
+                <li style="margin-bottom: 0.5rem;">Sets up Nginx web server configuration</li>
+                <li style="margin-bottom: 0.5rem;">Configures free SSL certificates (HTTPS) using Let's Encrypt</li>
+                <li style="margin-bottom: 0.5rem;">Creates systemd services to keep the products running</li>
+            </ul>
+        </div>
+        <div class="warning">
+            <strong>Disclaimer:</strong> This is an unofficial tool and is not officially supported by PlexDevelopment. Use at your own discretion.
+        </div>
+    </div>
+
+    <footer>
+        PlexDev.live made by: bali0531 | <a href="https://plexdevelopment.net" target="_blank">Official Site</a> | <a href="/guide">Simple Guide</a>
+    </footer>
+
+    <script>
+        // Placeholder for server-side variable
+        const betaAvailable = __BETA_AVAILABLE__;
+
+        const versionToggle = document.getElementById('version-toggle');
+        const betaUnavailableText = document.getElementById('beta-unavailable-text');
+        const bodyElement = document.body; // Get body element
+
+        if (!betaAvailable) {
+            versionToggle.disabled = true;
+            betaUnavailableText.style.display = 'inline';
+            // Ensure labels reflect disabled state visually
+             document.getElementById('beta-label').style.opacity = '0.5';
+             document.getElementById('beta-label').style.cursor = 'default';
+        } else {
+             // Make labels clickable to toggle the switch
+             document.getElementById('stable-label').onclick = () => { if (versionToggle.checked) versionToggle.click(); };
+             document.getElementById('beta-label').onclick = () => { if (!versionToggle.checked) versionToggle.click(); };
+        }
+
+
+        function switchTab(tabId) {
+            // Check if the target tab exists before proceeding
+            const targetTabContent = document.getElementById(tabId);
+            const targetTab = document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`);
+
+            if (!targetTabContent || !targetTab) {
+                console.error(`Tab or content not found for ID: ${tabId}`);
+                return; // Exit if elements don't exist
+            }
+
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+
+            targetTabContent.classList.add('active');
+            targetTab.classList.add('active');
+        }
+
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = "Copied!";
+                // Change color briefly on success
+                btn.style.backgroundColor = 'var(--success)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.backgroundColor = ''; // Revert color
+                 }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy text.'); // Simpler fallback
+            });
+        }
+
+        function toggleVersion() {
+            const isBeta = versionToggle.checked;
+            const betaWarning = document.getElementById('beta-warning');
+            const quickCode = document.getElementById('quick-install-code');
+            const manualDownloadCode = document.getElementById('manual-download-code');
+            const manualChmodCode = document.getElementById('manual-chmod-code');
+            const manualRunCode = document.getElementById('manual-run-code');
+            const stableLabel = document.getElementById('stable-label');
+            const betaLabel = document.getElementById('beta-label');
+
+            if (isBeta && betaAvailable) {
+                bodyElement.classList.add('beta-theme'); // Add beta theme class
+                betaWarning.style.display = 'block';
+                quickCode.textContent = 'curl -sSL https://plexdev.live/beta.sh | bash -i';
+                manualDownloadCode.textContent = 'curl -sSL -o beta.sh https://plexdev.live/beta.sh';
+                manualChmodCode.textContent = 'chmod +x beta.sh';
+                manualRunCode.textContent = './beta.sh';
+                stableLabel.style.opacity = '0.5';
+                betaLabel.style.opacity = '1';
+            } else {
+                bodyElement.classList.remove('beta-theme'); // Remove beta theme class
+                // Force back to stable if beta isn't available or toggle is off
+                if (!betaAvailable) versionToggle.checked = false;
+                betaWarning.style.display = 'none';
+                quickCode.textContent = 'curl -sSL https://plexdev.live/install.sh | bash -i';
+                manualDownloadCode.textContent = 'curl -sSL -o install.sh https://plexdev.live/install.sh';
+                manualChmodCode.textContent = 'chmod +x install.sh';
+                manualRunCode.textContent = './install.sh';
+                stableLabel.style.opacity = '1';
+                betaLabel.style.opacity = '0.5';
+            }
+        }
+
+        // Initial setup on page load
+        window.onload = () => {
+            // Activate the first tab ('quick')
+            switchTab('quick');
+            // Set initial state based on toggle (default is stable)
+            toggleVersion();
+        };
+    </script>
+</body>
+</html>
